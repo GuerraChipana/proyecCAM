@@ -1,0 +1,52 @@
+# ==========================================
+# CONFIGURACIÓN DEL SISTEMA VAD - MULTICÁMARA
+# ==========================================
+
+video:
+  target_size: [112, 112]
+  batch_size: 16
+  fps_simulacion: 16
+  
+  # ========================================================
+  # LISTA DE CÁMARAS A MONITOREAR SIMULTÁNEAMENTE
+  # Tipos permitidos: 
+  #   - "rtsp"   (Cámaras IP / DVR Dahua/Hikvision)
+  #   - "webcam" (Cámara web USB o de laptop)
+  #   - "local"  (Archivo de video .mp4 para pruebas)
+  # ========================================================
+  fuentes:
+    # 1. Cámara en Producción (DVR Dahua)
+    # - id: "CAM-CALLE-04"
+    #   tipo: "rtsp"
+    #   url: "rtsp://admin:admin123456@192.168.100.233:554/cam/realmonitor?channel=4&subtype=0"
+      
+    # # 2. Archivo Local (Para simular delitos garantizados en sustentación)
+    - id: "CAM-PRUEBA-MP4"
+      tipo: "local"
+      url: "data/input/video_prueba.mp4"
+
+    # 3. Cámara de la Laptop (Descomentar si quieres probar con tu rostro)
+    # - id: "CAM-RECEPCION-02"
+    #   tipo: "rtsp"
+    #   url: "rtsp://admin:admin123456@192.168.100.233:554/cam/realmonitor?channel=2&subtype=0"
+    # 4. Cámara de la Laptop (Descomentar si quieres probar con tu rostro)
+    # - id: "CAM-RECEPCION-03"
+    #   tipo: "rtsp"
+    #   url: "rtsp://admin:admin123456@192.168.100.233:554/cam/realmonitor?channel=3&subtype=0"
+  #  # 5. Cámara de la Laptop (Descomentar si quieres probar con tu rostro)
+    # - id: "CAM-RECEPCION-04"
+    #   tipo: "rtsp"
+    #   url: "rtsp://admin:admin123456@192.168.100.233:554/cam/realmonitor?channel=1&subtype=0"
+
+ia:
+  umbral_certeza: 0.70      # ¡Súbelo a 88%! Si no está casi segura, que se quede callada.
+
+reglas_negocio:
+  umbral_consecutivo: 5     # ¡6 lotes seguidos! Debe ver el robo durante un par de segundos reales.
+  enfriamiento_lotes: 10    # Más enfriamiento para evitar saturarte a ti y al operador.
+
+alertas:
+  directorio_salida: "data/output"
+  estados_guardar: 
+    - "ALERTA_CRITICA"
+    # - "SOSPECHA"          # Descomentar para guardar también los pre-avisos

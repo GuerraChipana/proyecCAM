@@ -1,0 +1,55 @@
+# Entorno virtual
+
+venv/
+.env
+
+# Python
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+
+*.log
+
+# VS Code
+
+.vscode/
+
+# PyCharm
+
+.idea/
+
+# Archivos temporales
+
+*.tmp
+*.bak
+
+# Salidas generadas
+
+data/output/*.jpg
+data/output/*.png
+data/output/*.txt
+
+# Dataset pesado (opcional)
+
+dataset/
+
+# Modelos entrenados
+
+models/
+checkpoints/
+*.pth
+*.pt
+
+# Sistema operativo
+
+.DS_Store
+Thumbs.db
+
+
+# Modelos entrenados
+*.pth
+*.pt
