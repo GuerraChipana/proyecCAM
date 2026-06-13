@@ -1,27 +1,66 @@
-# proyecCAM
+# HELLVISION VAD
 
-Sistema Inteligente de Detección de Anomalías en Video para Videovigilancia Urbana utilizando Deep Learning y Arquitectura Hexagonal.
+## Sistema Inteligente de Detección de Anomalías en Video para Videovigilancia Urbana
+
+Sistema basado en Deep Learning y Arquitectura Hexagonal para la detección automática de eventos anómalos en secuencias de video provenientes de cámaras de vigilancia y archivos multimedia.
 
 ---
 
-## Descripción
+# 📌 Descripción
 
-**proyecCAM** es una solución basada en Visión por Computadora y Deep Learning diseñada para detectar automáticamente eventos anómalos en secuencias de video provenientes de cámaras de vigilancia.
+**HELLVISION VAD (Video Anomaly Detection)** es una solución de Visión por Computadora orientada a la identificación automática de eventos de riesgo en entornos urbanos.
 
-El sistema clasifica los eventos en tres categorías:
+El sistema analiza secuencias de video y clasifica los eventos observados en tres categorías:
 
-* 🟢 Normal
+* 🟢 Comportamiento Normal
 * 🟠 Pelea / Agresión
 * 🔴 Robo / Hurto
 
-La solución utiliza un modelo basado en **R(2+1)D (Residual Spatiotemporal Convolutional Network)** y está desarrollada siguiendo los principios de **Arquitectura Hexagonal (Ports & Adapters)** para facilitar la escalabilidad, mantenibilidad e integración con sistemas reales de videovigilancia.
+La plataforma utiliza un modelo de Deep Learning basado en la arquitectura **R(2+1)D (Residual Spatiotemporal Convolutional Network)** optimizada para GPU NVIDIA mediante inferencia acelerada por CUDA.
 
 ---
 
-## Estructura del Proyecto
+# 🚀 Características Principales
+
+### Dashboard de Monitoreo
+
+* Visualización de video en tiempo real.
+* Información operativa en pantalla (OSD).
+* Adaptación a diferentes resoluciones de monitor.
+* Supervisión centralizada de eventos detectados.
+
+### Procesamiento Multihilo
+
+* Separación entre captura de video e inferencia.
+* Uso de colas asíncronas (`deque`) para reducir bloqueos.
+* Procesamiento continuo de flujos RTSP.
+
+### Optimización para GPU
+
+* Compatibilidad con CUDA.
+* Inferencia FP16.
+* Aprovechamiento de Tensor Cores.
+* Activación de `cudnn.benchmark`.
+
+### Gestión de Alertas
+
+* Umbrales configurables.
+* Validación por eventos consecutivos.
+* Tiempo de enfriamiento entre alertas.
+* Reducción de falsos positivos mediante reglas de negocio.
+
+### Arquitectura Escalable
+
+* Basada en Hexagonal Architecture (Ports & Adapters).
+* Separación entre dominio e infraestructura.
+* Facilidad para incorporar nuevas fuentes de video y modelos de IA.
+
+---
+
+# 🏗️ Arquitectura del Proyecto
 
 ```text
-proyecCAM/
+HELLVISION_VAD/
 │
 ├── dataset/
 │   ├── train/
@@ -57,7 +96,7 @@ proyecCAM/
 │           ├── video_sources/
 │           └── notifiers/
 │
-├── tests/
+├── train.py
 ├── main.py
 ├── requirements.txt
 └── README.md
@@ -65,41 +104,134 @@ proyecCAM/
 
 ---
 
-## Arquitectura del Sistema
+# 🧠 Dataset
 
-El proyecto está basado en el patrón **Hexagonal Architecture (Ports & Adapters)**.
+El conjunto de datos está organizado en tres clases:
 
-### Core
+| Clase            | Descripción                                 |
+| ---------------- | ------------------------------------------- |
+| 0_Normal         | Actividad cotidiana sin incidentes          |
+| 1_Pelea_Agresion | Agresiones físicas o enfrentamientos        |
+| 2_Robo_Hurto     | Sustracción de bienes o conductas asociadas |
 
-Contiene la lógica de negocio independiente de tecnologías externas.
+Distribución recomendada:
 
-* Entidades del dominio.
-* Casos de uso.
-* Reglas de negocio.
-
-### Ports
-
-Define contratos e interfaces para desacoplar la lógica del sistema.
-
-* Entrada de datos.
-* Modelos de IA.
-* Sistemas de alerta.
-* Fuentes de video.
-
-### Adapters
-
-Implementa las interfaces definidas por los puertos.
-
-* Lectura de video mediante OpenCV.
-* Integración con cámaras RTSP.
-* Modelos de Deep Learning.
-* Registro y notificación de eventos.
+* 80% Entrenamiento
+* 20% Validación
 
 ---
 
-## Ventajas de la Arquitectura
+# ⚙️ Requisitos del Sistema
 
-### Configuración Centralizada
+## Hardware Recomendado
+
+* NVIDIA RTX 4050 o superior
+* 16 GB RAM
+* Procesador Intel Core i5 / Ryzen 5 o superior
+* Monitor Full HD (1920×1080)
+
+## Software
+
+* Python 3.10+
+* Git
+* CUDA Toolkit 11.8+
+* Drivers NVIDIA actualizados
+
+---
+
+# 🛠️ Instalación
+
+## 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/GuerraChipana/proyecCAM.git
+cd proyecCAM
+```
+
+## 2. Crear entorno virtual
+
+### Windows
+
+```powershell
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+## 3. Instalar PyTorch con CUDA
+
+```powershell
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+## 4. Instalar dependencias
+
+```powershell
+pip install -r requirements.txt
+```
+
+---
+
+# 📦 requirements.txt
+
+```text
+opencv-python==4.8.1.78
+numpy==1.26.4
+PyYAML==6.0.1
+requests==2.31.0
+
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+```
+
+---
+
+# 🧠 Entrenamiento del Modelo
+
+Para entrenar nuevamente la red neuronal:
+
+## 1. Organizar el dataset
+
+```text
+dataset/
+├── train/
+└── val/
+```
+
+Cada carpeta debe contener las clases:
+
+```text
+0_Normal
+1_Pelea_Agresion
+2_Robo_Hurto
+```
+
+## 2. Ejecutar entrenamiento
+
+```bash
+python train.py
+```
+
+Al finalizar se generará un archivo de pesos:
+
+```text
+mi_modelo_vad.pth
+```
+
+Este archivo almacena el conocimiento aprendido por la red neuronal.
+
+> Una vez generado el archivo `.pth`, los videos de entrenamiento ya no son necesarios para ejecutar el sistema, aunque se recomienda conservarlos para futuros reentrenamientos.
+
+---
+
+# 🚦 Configuración de Cámaras
 
 Toda la configuración se encuentra en:
 
@@ -107,152 +239,46 @@ Toda la configuración se encuentra en:
 config/settings.yaml
 ```
 
-Permite modificar:
+Ejemplo:
 
-* FPS de procesamiento.
-* Umbrales de detección.
-* Uso de GPU.
-* Batch Size.
-* Configuración de cámaras.
-
-sin alterar el código fuente.
-
-### Independencia del Modelo de IA
-
-El modelo se encuentra encapsulado en:
-
-```text
-src/adapters/outbound/ai_models/
-```
-
-Esto permite reemplazar o actualizar la arquitectura de detección sin afectar el resto del sistema.
-
-### Integración con Cámaras Reales
-
-Actualmente se soporta:
-
-```text
-local_cv2_adapter.py
-```
-
-para videos locales.
-
-Y se encuentra preparado para:
-
-```text
-hikvision_rtsp_adapter.py
-```
-
-mediante transmisión RTSP desde cámaras IP.
-
----
-
-## Dataset
-
-El conjunto de datos está organizado en tres clases:
-
-| Clase            | Descripción                        |
-| ---------------- | ---------------------------------- |
-| 0_Normal         | Actividad cotidiana sin incidentes |
-| 1_Pelea_Agresion | Eventos de violencia física        |
-| 2_Robo_Hurto     | Eventos de robo o hurto            |
-
-Distribución:
-
-* 80% Entrenamiento
-* 20% Validación
-
----
-
-## Tecnologías Utilizadas
-
-* Python 3.10+
-* PyTorch
-* OpenCV
-* NumPy
-* Pandas
-* YAML
-* Deep Learning
-* Arquitectura Hexagonal
-
----
-
-## Instalación
-
-### 1. Clonar el repositorio
-
-```bash
-git clone https://github.com/GuerraChipana/proyecCAM.git
-cd proyecCAM
-```
-
-### 2. Crear entorno virtual
-
-Windows
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-Linux / macOS
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Instalar dependencias
-
-```bash
-pip install -r requirements.txt
+```yaml
+fuentes:
+  - id: CAM-INDEPENDENCIA-01
+    tipo: rtsp
+    url: rtsp://usuario:password@192.168.1.100:554/cam/realmonitor?channel=1&subtype=0
 ```
 
 ---
 
-## Ejecución
+# ▶️ Ejecución
 
-Ejecutar el sistema:
+Iniciar el sistema:
 
 ```bash
 python main.py
 ```
 
----
+Controles:
 
-## Entrenamiento del Modelo
-
-Si deseas entrenar nuevamente el modelo:
-
-```bash
-python train.py
-```
-
-El modelo generado se almacenará en:
-
-```text
-models/
-```
-
-> Nota: Los archivos `.pth` no se incluyen en este repositorio debido a las limitaciones de tamaño de GitHub.
+* ESC → Salir del sistema.
+* CTRL + E → Cierre seguro de la aplicación.
 
 ---
 
-## Objetivo de Investigación
+# 📈 Mejoras Futuras
 
-Desarrollar un sistema inteligente capaz de detectar automáticamente eventos anómalos en entornos urbanos mediante técnicas de Inteligencia Artificial y Visión por Computadora, contribuyendo al fortalecimiento de la seguridad ciudadana.
+* Persistencia de eventos mediante SQLite.
+* Dashboard Web.
+* Notificaciones por Telegram.
+* Exportación de reportes PDF.
+* Integración con YOLO para análisis contextual.
+* Almacenamiento de evidencias visuales.
 
 ---
 
-## Autor
-
-**Anthony Guerra Chipana**
+# 
 
 Ingeniería de Sistemas e Informática
 Universidad Tecnológica del Perú (UTP) – Ica
 
----
-
-## Licencia
-
-Este proyecto es desarrollado con fines académicos y de investigación.
+Proyecto de Investigación Académica.
